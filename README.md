@@ -75,7 +75,7 @@ that experience. So I spent a few weeks creating my own HTTP Client library
 using boost::asio with JSON serialization/deserialization.
 
 # Dependencies
-Restc-cpp depends on C++14 with its standard libraries and:
+Restc-cpp depends on C++14 (or newer) with its standard libraries and:
   - boost
   - rapidjson (CMake will download and install rapidjson for the project)
   - gtest (CMake will download and install gtest for the project if it is not installed)
@@ -253,6 +253,21 @@ Please refer to the [tutorial](doc/Tutorial.md) for more examples.
 # Current Status
 The project has been in public BETA since April 11th 2017.
 
+# Supported compilers
+These are the compilers that are being tested before anything is merged to the master branch.
+
+- g++ from 8 to 14
+- clang (current)
+- msvc (current)
+- Apple clang (current)
+
+# Supported C++ standards
+These are the C++ versions that are are being tested before anything is merged to the master branch.
+
+- C++14
+- C++17
+- C++20
+ 
 # Supported operating systems
 These are the operating systems where my Continues Integration (Jenkins) servers currently compiles the project and run all the tests:
 
@@ -265,13 +280,16 @@ These are the operating systems where my Continues Integration (Jenkins) servers
  - Ubuntu Jammy (LTS)
  - Ubuntu Bionic (LTS)
  - Fedora (latest)
-
-Support for MacOS has been removed after Apples announcement that their love for privacy was just 
-a marketing gimmick.
+ - MacOS (latest)
 
 The Jenkins setup is [here](ci/jenkins).
 
-I currently use my own CI infrastructure running on my own hardware. I use Jenkins on a VM with Debian Bookworm, and three slaves for Docker on Linux VM's, one slave running on a VM with Microsoft Windows 10 Pro. Using Docker to build with different Linux distributions gives me flexibility. It also immediately catches mistakes that break the build or test(s) on a specific Linux distribution or platform. Using my own infrastructure improves the security, as I don't share any credentials with 3rd party services or allow external access into my LAN. Github Actions can not compile for various Linux variants (at least not on the free plan for Open Source projects), and it can not run multiple docker-containers (or even *any* containers for Windows or MacOS builds) to allow integration testing.
+I currently use my own CI infrastructure running on my own hardware. I use Jenkins on a VM with Debian Bookworm, and three slaves for Docker on Linux VM's, one slave running on a VM with Microsoft Windows 10 Pro. Using Docker to build with different Linux distributions gives me flexibility. It also immediately catches mistakes that break the build or test(s) on a specific Linux distribution or platform. Using my own infrastructure improves the security, as I don't share any credentials with 3rd party services or allow external access into my LAN. 
+
+Github Actions can not compile for various Linux variants (at least not on the free plan for Open Source projects), 
+and it can not run multiple docker-containers (or even *any* containers for Windows or MacOS builds) to allow integration testing.
+I have configured it for this repository anyway, because it's automation setup is different than the Jenkins setup,
+which have helped identifying some issues with the projects cmake files.
 
 # Blog-posts about the project:
   - [About version 0.90](https://lastviking.eu/restc_cpp_90.html)
