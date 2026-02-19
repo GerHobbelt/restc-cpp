@@ -53,6 +53,74 @@ pipeline {
                     }
                 }
 
+                stage('Ubuntu Plucky') {
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile.ubuntu-plucky'
+                            dir 'ci/jenkins'
+                            label 'docker'
+                            args '-u root'
+                        }
+                    }
+
+                    options {
+                        timeout(time: 60, unit: "MINUTES")
+                    }
+
+                    steps {
+                        echo "Building on ubuntu-plucky-AMD64 in ${NODE_NAME} --> ${WORKSPACE}"
+                        checkout scm
+                        sh 'pwd; ls -la'
+                        sh 'rm -rf build'
+                        sh 'mkdir build'
+                        sh 'cd build && cmake -DCMAKE_BUILD_TYPE=Release  .. && make -j $(nproc)'
+
+                        echo 'Getting ready to run tests'
+                        script {
+                            try {
+                                sh 'cd build && ctest --no-compress-output -T Test'
+                            } catch (exc) {
+
+                                unstable(message: "${STAGE_NAME} - Testing failed")
+                            }
+                        }
+                    }
+                }
+
+                stage('Ubuntu Plucky MT CTX') {
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile.ubuntu-plucky'
+                            dir 'ci/jenkins'
+                            label 'docker'
+                            args '-u root'
+                        }
+                    }
+
+                    options {
+                        timeout(time: 60, unit: "MINUTES")
+                    }
+
+                    steps {
+                        echo "Building on ubuntu-plucky-MT-AMD64 in ${NODE_NAME} --> ${WORKSPACE}"
+                        checkout scm
+                        sh 'pwd; ls -la'
+                        sh 'rm -rf build'
+                        sh 'mkdir build'
+                        sh 'cd build && cmake -DRESTC_CPP_THREADED_CTX=ON -DCMAKE_BUILD_TYPE=Release  .. && make -j $(nproc)'
+
+                        echo 'Getting ready to run tests'
+                        script {
+                            try {
+                                sh 'cd build && ctest --no-compress-output -T Test'
+                            } catch (exc) {
+
+                                unstable(message: "${STAGE_NAME} - Testing failed")
+                            }
+                        }
+                    }
+                }
+
                 stage('Ubuntu Noble') {
                     agent {
                         dockerfile {
@@ -64,7 +132,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -98,7 +166,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -121,7 +189,7 @@ pipeline {
                     }
                 }
 
-                 stage('Ubuntu Jammy') {
+                stage('Ubuntu Jammy') {
                     agent {
                         dockerfile {
                             filename 'Dockefile.ubuntu-jammy'
@@ -132,7 +200,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -166,7 +234,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -189,40 +257,6 @@ pipeline {
                     }
                 }
 
-                stage('Ubuntu Bionic') {
-                    agent {
-                        dockerfile {
-                            filename 'Dockerfile.ubuntu-bionic'
-                            dir 'ci/jenkins'
-                            label 'docker'
-                            args '-u root'
-                        }
-                    }
-
-                    options {
-                        timeout(time: 30, unit: "MINUTES")
-                    }
-
-                    steps {
-                        echo "Building on ubuntu-bionic-AMD64 in ${NODE_NAME} --> ${WORKSPACE}"
-                        checkout scm
-                        sh 'rm -rf build'
-                        sh 'mkdir build'
-                        sh 'cd build && cmake -DGTEST_TAG=release-1.12.0 -DCMAKE_BUILD_TYPE=Release .. && make -j $(nproc)'
-
-                        echo 'Getting ready to run tests'
-                        script {
-                            try {
-                                sh 'cd build && ctest --no-compress-output -T Test'
-                            } catch (exc) {
-
-                                unstable(message: "${STAGE_NAME} - Testing failed")
-                            }
-                        }
-                    }
-                }
-
-
                 stage('Debian Bullseye') {
                     agent {
                         dockerfile {
@@ -234,7 +268,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -268,7 +302,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -302,7 +336,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -336,7 +370,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -370,7 +404,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -404,7 +438,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -438,7 +472,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -472,7 +506,7 @@ pipeline {
                     }
 
                     options {
-                        timeout(time: 30, unit: "MINUTES")
+                        timeout(time: 60, unit: "MINUTES")
                     }
 
                     steps {
@@ -541,9 +575,12 @@ pipeline {
                         checkout scm
 
                         bat script: '''
-                            PATH=%PATH%;C:\\Program Files\\CMake\\bin;C:\\src\\vcpkg;C:\\Program Files\\Git\\bin
+                            PATH=C:\\src\\vcpkg;%PATH%;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin
+                            git -C C:\\src\\vcpkg pull --rebase
+                            vcpkg upgrade --no-dry-run
+                            vcpkg remove --outdated
                             vcpkg integrate install
-                            vcpkg install rapidjson gtest zlib openssl boost --triplet x64-windows
+                            vcpkg install rapidjson gtest zlib openssl boost-program-options boost-filesystem boost-date-time boost-coroutine boost-context boost-chrono boost-asio boost-system boost-log --triplet x64-windows
                             if %errorlevel% neq 0 exit /b %errorlevel%
                             rmdir /S /Q build
                             mkdir build
@@ -572,6 +609,7 @@ pipeline {
                     }
                 }
 
+
                 stage('Windows X64 with vcpkg MT CTX') {
 
                     agent {label 'windows'}
@@ -587,9 +625,12 @@ pipeline {
                         checkout scm
 
                         bat script: '''
-                            PATH=%PATH%;C:\\Program Files\\CMake\\bin;C:\\src\\vcpkg;C:\\Program Files\\Git\\bin
+                            PATH=C:\\src\\vcpkg;%PATH%;C:\\Program Files\\CMake\\bin;C:\\Program Files\\Git\\bin
+                            git -C C:\\src\\vcpkg pull --rebase
+                            vcpkg upgrade --no-dry-run
+                            vcpkg remove --outdated
                             vcpkg integrate install
-                            vcpkg install rapidjson gtest zlib openssl boost --triplet x64-windows
+                            vcpkg install rapidjson gtest zlib openssl boost-program-options boost-filesystem boost-date-time boost-coroutine boost-context boost-chrono boost-asio boost-system boost-log --triplet x64-windows
                             if %errorlevel% neq 0 exit /b %errorlevel%
                             rmdir /S /Q build
                             mkdir build
